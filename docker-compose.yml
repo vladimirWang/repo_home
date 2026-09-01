@@ -2,9 +2,7 @@ name: wms-landing
 
 services:
   nextjs:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: furchtlos/wms-landing:latest
     container_name: wms-landing-nextjs
     restart: unless-stopped
     expose:
