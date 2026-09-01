@@ -17,9 +17,10 @@ RUN corepack enable && pnpm config set registry https://registry.npmmirror.com &
 COPY wms-landing/ ./
 
 # Next.js standalone + 拷贝静态资源
-RUN pnpm build && \
+RUN mkdir -p public && \
+    pnpm build && \
     cp -r .next/static .next/standalone/.next/static && \
-    cp -r public .next/standalone/public 2>/dev/null || true
+    cp -r public .next/standalone/public
 
 # Stage 2 — Runner (minimal)
 FROM node:22-alpine AS runner
@@ -37,7 +38,7 @@ RUN addgroup -g 1001 -S nodejs && \
 # 拷贝 standalone 产物
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/public/ ./public/
 
 USER nextjs
 
