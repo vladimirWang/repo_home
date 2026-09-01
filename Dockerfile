@@ -3,10 +3,15 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
+# ====== 国内服务器加速：淘宝镜像源 ======
+RUN echo "registry=https://registry.npmmirror.com" > /etc/npmrc && \
+    npm config set registry https://registry.npmmirror.com --location=global
+
 # 仅先拷贝依赖定义，利用 Docker layer cache
 COPY wms-landing/package.json wms-landing/pnpm-lock.yaml wms-landing/pnpm-workspace.yaml* wms-landing/.npmrc* ./
 
-RUN corepack enable && pnpm install --frozen-lockfile 2>/dev/null || pnpm install
+RUN corepack enable && pnpm config set registry https://registry.npmmirror.com && \
+    pnpm install --frozen-lockfile 2>/dev/null || pnpm install
 
 # 再拷贝源码
 COPY wms-landing/ ./
