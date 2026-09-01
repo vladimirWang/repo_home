@@ -7,31 +7,40 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-echo "==> [1/3] 检查证书文件..."
+DOMAIN="wms.hetou.vip"
 SSL_DIR="./ssl"
+
+echo "==> [1/3] 检查证书文件..."
 mkdir -p "$SSL_DIR"
-# 优先用 luyin 专用证书，fallback 到 www.hetou.vip 通配符证书
-if [ -f "$SSL_DIR/luyin.hetou.vip.pem" ] && [ -f "$SSL_DIR/luyin.hetou.vip.key" ]; then
-  echo "    ✅ luyin.hetou.vip 证书已就绪"
+
+# 优先 wms 专用证书 → fallback www.hetou.vip 通配符 → fallback luyin 旧证书
+if [ -f "$SSL_DIR/${DOMAIN}.pem" ] && [ -f "$SSL_DIR/${DOMAIN}.key" ]; then
+  echo "    ✅ ${DOMAIN} 证书已就绪"
 elif [ -f "./www.hetou.vip.pem" ] && [ -f "./www.hetou.vip.key" ]; then
-  echo "    ⚠️  使用 www.hetou.vip 通配符证书（需确认覆盖 luyin.hetou.vip）"
-  cp -f ./www.hetou.vip.pem "$SSL_DIR/luyin.hetou.vip.pem"
-  cp -f ./www.hetou.vip.key "$SSL_DIR/luyin.hetou.vip.key"
+  echo "    ⚠️  使用 www.hetou.vip 通配符证书"
+  cp -f ./www.hetou.vip.pem "$SSL_DIR/${DOMAIN}.pem"
+  cp -f ./www.hetou.vip.key "$SSL_DIR/${DOMAIN}.key"
+elif [ -f "./ssl/luyin.hetou.vip.pem" ] && [ -f "./ssl/luyin.hetou.vip.key" ]; then
+  echo "    ⚠️  使用 luyin.hetou.vip 证书（需更新为 ${DOMAIN}）"
+  cp -f ./ssl/luyin.hetou.vip.pem "$SSL_DIR/${DOMAIN}.pem"
+  cp -f ./ssl/luyin.hetou.vip.key "$SSL_DIR/${DOMAIN}.key"
 else
   echo "    ❌ 找不到 SSL 证书！需要:"
-  echo "       $SSL_DIR/luyin.hetou.vip.pem"
-  echo "       $SSL_DIR/luyin.hetou.vip.key"
+  echo "       $SSL_DIR/${DOMAIN}.pem"
+  echo "       $SSL_DIR/${DOMAIN}.key"
   exit 1
 fi
 
-echo "==> [2/3] 构建 & 启动容器..."
-docker compose up -d --build
+echo "==> [2/3] 拉取镜像 & 启动容器..."
+docker compose pull
+docker compose up -d
 
 echo "==> [3/3] 等待服务就绪..."
 sleep 5
 echo ""
 echo "✅  启动完成！"
-echo "    HTTPS: https://luyin.hetou.vip"
+echo "    HTTP:  http://${DOMAIN}  → 301 → HTTPS"
+echo "    HTTPS: https://${DOMAIN}"
 echo ""
 echo "常用命令:"
 echo "  ./stop.sh              停止服务"
