@@ -7,23 +7,27 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-DOMAIN="wms.hetou.vip"
+DOMAIN="www.hetou.vip"
 SSL_DIR="./ssl"
 
 echo "==> [1/3] 检查证书文件..."
 mkdir -p "$SSL_DIR"
 
-# 优先 wms 专用证书 → fallback www.hetou.vip 通配符 → fallback luyin 旧证书
+# 优先 www.hetou.vip 专用证书 → fallback 通配符 *.hetou.vip → fallback wms / luyin 旧证书
 if [ -f "$SSL_DIR/${DOMAIN}.pem" ] && [ -f "$SSL_DIR/${DOMAIN}.key" ]; then
   echo "    ✅ ${DOMAIN} 证书已就绪"
+elif [ -f "./${DOMAIN}.pem" ] && [ -f "./${DOMAIN}.key" ]; then
+  echo "    ✅ 使用根目录下 ${DOMAIN} 证书"
+  cp -f ./${DOMAIN}.pem "$SSL_DIR/${DOMAIN}.pem"
+  cp -f ./${DOMAIN}.key "$SSL_DIR/${DOMAIN}.key"
 elif [ -f "./www.hetou.vip.pem" ] && [ -f "./www.hetou.vip.key" ]; then
-  echo "    ⚠️  使用 www.hetou.vip 通配符证书"
+  echo "    ✅ 使用根目录 www.hetou.vip 通配符证书"
   cp -f ./www.hetou.vip.pem "$SSL_DIR/${DOMAIN}.pem"
   cp -f ./www.hetou.vip.key "$SSL_DIR/${DOMAIN}.key"
-elif [ -f "./ssl/luyin.hetou.vip.pem" ] && [ -f "./ssl/luyin.hetou.vip.key" ]; then
-  echo "    ⚠️  使用 luyin.hetou.vip 证书（需更新为 ${DOMAIN}）"
-  cp -f ./ssl/luyin.hetou.vip.pem "$SSL_DIR/${DOMAIN}.pem"
-  cp -f ./ssl/luyin.hetou.vip.key "$SSL_DIR/${DOMAIN}.key"
+elif [ -f "./ssl/wms.hetou.vip.pem" ] && [ -f "./ssl/wms.hetou.vip.key" ]; then
+  echo "    ⚠️  使用 wms.hetou.vip 证书"
+  cp -f ./ssl/wms.hetou.vip.pem "$SSL_DIR/${DOMAIN}.pem"
+  cp -f ./ssl/wms.hetou.vip.key "$SSL_DIR/${DOMAIN}.key"
 else
   echo "    ❌ 找不到 SSL 证书！需要:"
   echo "       $SSL_DIR/${DOMAIN}.pem"
