@@ -1,0 +1,21 @@
+# 项目根目录的构建上下文是 repo_home，需要排除
+# wms-landing 下自身的 node_modules / .next / .git 等
+wms-landing/node_modules
+wms-landing/.next
+wms-landing/.git
+wms-landing/.gitignore
+wms-landing/.env*
+wms-landing/npm-debug.log*
+wms-landing/yarn-error.log*
+wms-landing/.DS_Store
+wms-landing/*.tsbuildinfo
+wms-landing/.vscode
+wms-landing/.idea
+wms-landing/.turbo
+wms-landing/coverage
+wms-landing/dist
+wms-landing/build
+wms-landing/.docker
+wms-landing/pnpm-store
+wms-landing/.pnpm-store
+*.md
