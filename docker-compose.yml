@@ -18,7 +18,7 @@ services:
     container_name: wms-landing-nginx
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "7000:7000"
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
