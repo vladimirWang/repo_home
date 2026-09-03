@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+const WMS_URL = "https://wms.hetou.vip:6443/#/landing/login?redirect=%2F";
+
 export function Cta() {
   return (
     <section id="contact" className="border-t border-border/60 py-24">
@@ -33,14 +35,16 @@ export function Cta() {
               立即开始 14 天免费试用，或联系我们获取定制化方案演示。
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-              <Button
-                size="lg"
-                variant="secondary"
-                className="group border-0"
-              >
-                免费开始
-                <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Button>
+              <a href={WMS_URL} target="_blank" rel="noopener noreferrer">
+                <Button
+                  size="lg"
+                  variant="secondary"
+                  className="group border-0"
+                >
+                  免费开始
+                  <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Button>
+              </a>
               <Button
                 size="lg"
                 variant="outline"

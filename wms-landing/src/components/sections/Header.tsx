@@ -37,10 +37,14 @@ export function Header() {
 
         {/* Actions */}
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
-            登录
-          </Button>
-          <Button size="sm">免费试用</Button>
+          <Link href="https://wms.hetou.vip:6443/#/landing/login?redirect=%2F" target="_blank">
+            <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
+              登录
+            </Button>
+          </Link>
+          <Link href="https://wms.hetou.vip:6443/#/landing/login?redirect=%2F" target="_blank">
+            <Button size="sm">免费试用</Button>
+          </Link>
           <Button variant="ghost" size="icon" className="md:hidden">
             <Menu className="h-5 w-5" />
           </Button>
